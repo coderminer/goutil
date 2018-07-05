@@ -180,3 +180,48 @@ func BulkUpsert(db, collection string, pairs ...interface{}) (*mgo.BulkResult, e
 	bulk.Upsert(pairs...)
 	return bulk.Run()
 }
+
+func PipeAll(db, collection string, pipeline, result interface{}, allowDiskUse bool) error {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	var pipe *mgo.Pipe
+	if allowDiskUse {
+		pipe = c.Pipe(pipeline).AllowDiskUse()
+	} else {
+		pipe = c.Pipe(pipeline)
+	}
+	return pipe.All(result)
+}
+
+func PipeOne(db, collection string, pipeline, result interface{}, allowDiskUse bool) error {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	var pipe *mgo.Pipe
+	if allowDiskUse {
+		pipe = c.Pipe(pipeline).AllowDiskUse()
+	} else {
+		pipe = c.Pipe(pipeline)
+	}
+	return pipe.One(result)
+}
+
+func PipeIter(db, collection string, pipeline interface{}, allowDiskUse bool) *mgo.Iter {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	var pipe *mgo.Pipe
+	if allowDiskUse {
+		pipe = c.Pipe(pipeline).AllowDiskUse()
+	} else {
+		pipe = c.Pipe(pipeline)
+	}
+
+	return pipe.Iter()
+
+}
+
+func Explain(db, collection string, pipeline, result interface{}) error {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	pipe := c.Pipe(pipeline)
+	return pipe.Explain(result)
+}
