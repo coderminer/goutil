@@ -1,5 +1,5 @@
 # goutil
-对 [mgo]()关于MongoDB的一些基础操作做一下封装，便于直接调用  
+对 [mgo](https://godoc.org/github.com/globalsign/mgo)关于MongoDB的一些基础操作做一下封装，便于直接调用  
 
 * 插入一个或多个`document`
 
