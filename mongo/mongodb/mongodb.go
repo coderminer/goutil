@@ -42,6 +42,11 @@ func connect(db, collection string) (*mgo.Session, *mgo.Collection) {
 	return ms, c
 }
 
+func getDb(db string) (*mgo.Session, *mgo.Database) {
+	ms := globalS.Copy()
+	return ms, ms.DB(db)
+}
+
 func IsEmpty(db, collection string) bool {
 	ms, c := connect(db, collection)
 	defer ms.Close()
@@ -224,4 +229,38 @@ func Explain(db, collection string, pipeline, result interface{}) error {
 	defer ms.Close()
 	pipe := c.Pipe(pipeline)
 	return pipe.Explain(result)
+}
+func GridFSCreate(db, prefix, name string) (*mgo.GridFile, error) {
+	ms, d := getDb(db)
+	defer ms.Close()
+	gridFs := d.GridFS(prefix)
+	return gridFs.Create(name)
+}
+
+func GridFSFindOne(db, prefix string, query, result interface{}) error {
+	ms, d := getDb(db)
+	defer ms.Close()
+	gridFs := d.GridFS(prefix)
+	return gridFs.Find(query).One(result)
+}
+
+func GridFSFindAll(db, prefix string, query, result interface{}) error {
+	ms, d := getDb(db)
+	defer ms.Close()
+	gridFs := d.GridFS(prefix)
+	return gridFs.Find(query).All(result)
+}
+
+func GridFSOpen(db, prefix, name string) (*mgo.GridFile, error) {
+	ms, d := getDb(db)
+	defer ms.Close()
+	gridFs := d.GridFS(prefix)
+	return gridFs.Open(name)
+}
+
+func GridFSRemove(db, prefix, name string) error {
+	ms, d := getDb(db)
+	defer ms.Close()
+	gridFs := d.GridFS(prefix)
+	return gridFs.Remove(name)
 }
