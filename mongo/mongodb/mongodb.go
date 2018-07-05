@@ -58,11 +58,11 @@ func Count(db, collection string, query interface{}) (int, error) {
 	return c.Find(query).Count()
 }
 
-func Insert(db, collection string, doc ...interface{}) error {
+func Insert(db, collection string, docs ...interface{}) error {
 	ms, c := connect(db, collection)
 	defer ms.Close()
 
-	return c.Insert(doc...)
+	return c.Insert(docs...)
 }
 
 func FindOne(db, collection string, query, selector, result interface{}) error {
@@ -84,6 +84,13 @@ func FindPage(db, collection string, page, limit int, query, selector, result in
 	defer ms.Close()
 
 	return c.Find(query).Select(selector).Skip(page * limit).Limit(limit).All(result)
+}
+
+func FindIter(db, collection string, query interface{}) *mgo.Iter {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+
+	return c.Find(query).Iter()
 }
 
 func Update(db, collection string, selector, update interface{}) error {
@@ -122,4 +129,54 @@ func RemoveAll(db, collection string, selector interface{}) error {
 
 	_, err := c.RemoveAll(selector)
 	return err
+}
+
+//insert one or multi documents
+func BulkInsert(db, collection string, docs ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	bulk := c.Bulk()
+	bulk.Insert(docs...)
+	return bulk.Run()
+}
+
+func BulkRemove(db, collection string, selector ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+
+	bulk := c.Bulk()
+	bulk.Remove(selector...)
+	return bulk.Run()
+}
+
+func BulkRemoveAll(db, collection string, selector ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	bulk := c.Bulk()
+	bulk.RemoveAll(selector...)
+	return bulk.Run()
+}
+
+func BulkUpdate(db, collection string, pairs ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	bulk := c.Bulk()
+	bulk.Update(pairs...)
+	return bulk.Run()
+}
+
+func BulkUpdateAll(db, collection string, pairs ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	bulk := c.Bulk()
+	bulk.UpdateAll(pairs...)
+	return bulk.Run()
+}
+
+func BulkUpsert(db, collection string, pairs ...interface{}) (*mgo.BulkResult, error) {
+	ms, c := connect(db, collection)
+	defer ms.Close()
+	bulk := c.Bulk()
+	bulk.Upsert(pairs...)
+	return bulk.Run()
 }
