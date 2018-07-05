@@ -9,7 +9,7 @@ func Insert(db, collection string, docs ...interface{}) error
 
 * 查询一个满足条件的`document`  
 
-**query**查询条件 `bson.M{"_id":"id"}`
+**query**查询条件 `bson.M{"_id":"id"}`  
 **selector**相当于MongoDB中的projection,查询结果中是否显示某个字段 `bson.M{"_id":0}`
 
 ```
