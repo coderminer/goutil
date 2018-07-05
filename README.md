@@ -111,3 +111,15 @@ func PipeOne(db, collection string, pipeline, result interface{}, allowDiskUse b
 ```
 func PipeIter(db, collection string, pipeline interface{}, allowDiskUse bool) *mgo.Iter
 ```
+
+* Document是否为空
+
+```
+func IsEmpty(db, collection string) bool
+```
+
+* 查询满足条件的数量
+
+```
+func Count(db, collection string, query interface{}) (int, error)
+```
