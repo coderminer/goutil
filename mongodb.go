@@ -58,11 +58,11 @@ func Count(db, collection string, query interface{}) (int, error) {
 	return c.Find(query).Count()
 }
 
-func Insert(db, collection string, doc interface{}) error {
+func Insert(db, collection string, doc ...interface{}) error {
 	ms, c := connect(db, collection)
 	defer ms.Close()
 
-	return c.Insert(doc)
+	return c.Insert(doc...)
 }
 
 func FindOne(db, collection string, query, selector, result interface{}) error {
